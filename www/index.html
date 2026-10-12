@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>GOLFSCORE — round tracker</title>
+  <link rel="preload" href="fonts/cormorant-garamond-v21-latin-500.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- ============ RESUME ROUND PROMPT ============ -->
+  <div class="hole15-modal" id="resume-prompt-modal" hidden>
+    <div class="hole15-modal-card" role="dialog" aria-modal="true" aria-labelledby="resume-prompt-title">
+      <p class="hole15-modal-title" id="resume-prompt-title">You have a round in progress. Would you like to resume?</p>
+      <div class="resume-prompt-actions">
+        <button class="btn btn-secondary" id="btn-resume-prompt-no" type="button">No</button>
+        <button class="btn btn-primary" id="btn-resume-prompt-yes" type="button">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN: VERIFY EMAIL ============ -->
+  <section id="screen-verify" class="screen">
+    <div class="home-wrap">
+      <div class="brand">
+        <img src="Strokes_Golf_Logo_Transparent.png" alt="STROKES GOLF" class="brand-logo">
+      </div>
+      <h2 class="auth-heading">Check your email</h2>
+      <p class="auth-subtext">We sent a verification link to <strong id="verify-email-display"></strong>. Click it, then
+        come back here and log in.</p>
+      <button class="btn btn-secondary btn-block" id="btn-resend-verify">Resend email</button>
+      <button class="link-btn link-btn-center" id="btn-verify-back">Back to login</button>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN: AUTH ============ -->
+  <section id="screen-auth" class="screen active">
+    <div class="home-wrap">
+      <div class="brand">
+        <img src="Strokes_Golf_Logo_Transparent.png" alt="STROKES GOLF" class="brand-logo">
+        <p class="brand-tag">Built for the Match.</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="auth-tab-login" type="button">Log in</button>
+        <button class="auth-tab" id="auth-tab-signup" type="button">Sign up</button>
+      </div>
+
+      <button type="button" class="btn btn-secondary btn-lg btn-block btn-social" id="btn-google-auth">
+        <svg class="btn-icon" viewBox="0 0 18 18" aria-hidden="true">
+          <path fill="#4285F4" d="M17.64 9.2045c0-.6381-.0573-1.2518-.1636-1.8409H9v3.4814h4.8436c-.2086 1.125-.8427 2.0782-1.7959 2.7164v2.2581h2.9087c1.7018-1.5668 2.6836-3.8741 2.6836-6.615z"/>
+          <path fill="#34A853" d="M9 18c2.43 0 4.4673-.806 5.9564-2.1805l-2.9087-2.2581c-.8059.54-1.8368.8604-3.0477.8604-2.3436 0-4.3282-1.5831-5.036-3.7104H.9573v2.3318C2.4382 15.9832 5.4818 18 9 18z"/>
+          <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.2822-1.1168-.2822-1.71s.1023-1.17.2823-1.71V4.9582H.9573C.3477 6.1732 0 7.5477 0 9s.3477 2.8268.9573 4.0418L3.964 10.71z"/>
+          <path fill="#EA4335" d="M9 3.5795c1.3214 0 2.5077.4541 3.4404 1.346l2.5818-2.5819C13.4632.8918 11.4259 0 9 0 5.4818 0 2.4382 2.0168.9573 4.9582L3.964 7.29C4.6718 5.1627 6.6564 3.5795 9 3.5795z"/>
+        </svg>
+        <span class="btn-label">Continue with Google</span>
+      </button>
+      <!-- Hidden until Apple Developer Program setup (Services ID, Xcode
+           capability) is done — remove `hidden` once that's wired up. -->
+      <button type="button" class="btn btn-secondary btn-lg btn-block" id="btn-apple-auth" hidden>
+        <span class="btn-label">Continue with Apple</span>
+      </button>
+      <div class="divider"><span>or</span></div>
+
+      <form id="form-auth" class="auth-form">
+        <div class="field">
+          <label class="field-label" for="auth-name-field">Your name</label>
+          <input type="text" id="auth-name-field" placeholder="e.g. Hunter" autocomplete="name" hidden>
+        </div>
+        <div class="field">
+          <label class="field-label" for="auth-email">Email</label>
+          <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="auth-password">Password</label>
+          <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" required
+            minlength="6">
+        </div>
+        <p class="auth-error" id="auth-error" hidden></p>
+        <button type="submit" class="btn btn-primary btn-lg btn-block" id="btn-auth-submit">
+          <span class="btn-label">Log in</span>
+        </button>
+        <button type="button" class="link-btn link-btn-center" id="btn-forgot-password">Forgot password?</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: RESET PASSWORD (request) ============ -->
+  <section id="screen-forgot" class="screen">
+    <div class="home-wrap">
+      <div class="brand">
+        <img src="Strokes_Golf_Logo_Transparent.png" alt="STROKES GOLF" class="brand-logo">
+      </div>
+      <h2 class="auth-heading">Reset your password</h2>
+      <p class="auth-subtext">Enter your email and we'll send you a link to set a new password.</p>
+      <form id="form-forgot" class="auth-form">
+        <div class="field">
+          <label class="field-label" for="forgot-email">Email</label>
+          <input type="email" id="forgot-email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <p class="auth-error" id="forgot-error" hidden></p>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Send reset link</button>
+        <button type="button" class="link-btn link-btn-center" id="btn-forgot-back">Back to login</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: JOIN OPTIONS ============ -->
+  <section id="screen-join-options" class="screen">
+    <div class="home-wrap">
+      <div class="brand">
+        <img src="Strokes_Golf_Logo_Transparent.png" alt="STROKES GOLF" class="brand-logo">
+        <p class="brand-tag">Built for the Match.</p>
+      </div>
+      <h2 class="auth-heading">You're invited!</h2>
+      <p class="auth-subtext">How would you like to join this round?</p>
+      <button type="button" class="btn btn-primary btn-lg btn-block" id="btn-join-signup">
+        <span class="btn-label">Create an account</span>
+        <span class="btn-sub">Save your scores and round history</span>
+      </button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block" id="btn-join-login">
+        <span class="btn-label">Log in</span>
+        <span class="btn-sub">Already have an account</span>
+      </button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block btn-social" id="btn-join-google">
+        <svg class="btn-icon" viewBox="0 0 18 18" aria-hidden="true">
+          <path fill="#4285F4" d="M17.64 9.2045c0-.6381-.0573-1.2518-.1636-1.8409H9v3.4814h4.8436c-.2086 1.125-.8427 2.0782-1.7959 2.7164v2.2581h2.9087c1.7018-1.5668 2.6836-3.8741 2.6836-6.615z"/>
+          <path fill="#34A853" d="M9 18c2.43 0 4.4673-.806 5.9564-2.1805l-2.9087-2.2581c-.8059.54-1.8368.8604-3.0477.8604-2.3436 0-4.3282-1.5831-5.036-3.7104H.9573v2.3318C2.4382 15.9832 5.4818 18 9 18z"/>
+          <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.2822-1.1168-.2822-1.71s.1023-1.17.2823-1.71V4.9582H.9573C.3477 6.1732 0 7.5477 0 9s.3477 2.8268.9573 4.0418L3.964 10.71z"/>
+          <path fill="#EA4335" d="M9 3.5795c1.3214 0 2.5077.4541 3.4404 1.346l2.5818-2.5819C13.4632.8918 11.4259 0 9 0 5.4818 0 2.4382 2.0168.9573 4.9582L3.964 7.29C4.6718 5.1627 6.6564 3.5795 9 3.5795z"/>
+        </svg>
+        <span class="btn-label">Continue with Google</span>
+      </button>
+      <!-- Hidden until Apple Developer Program setup is done — see the
+           matching comment on #btn-apple-auth. -->
+      <button type="button" class="btn btn-secondary btn-lg btn-block" id="btn-join-apple" hidden>
+        <span class="btn-label">Continue with Apple</span>
+      </button>
+      <div class="divider"><span>or</span></div>
+      <button type="button" class="link-btn link-btn-center" id="btn-join-guest">Continue as guest</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: RESET PASSWORD (set new) ============ -->
+  <section id="screen-join-options" class="screen" hidden>
+    <div class="home-wrap">
+      <div class="brand">
+        <img src="Strokes_Golf_Logo_Transparent.png" alt="STROKES GOLF" class="brand-logo">
+        <p class="brand-tag">Built for the Match.</p>
+      </div>
+      <h2 class="auth-heading">You're invited!</h2>
+      <p class="auth-subtext">How would you like to join this round?</p>
+      <button type="button" class="btn btn-primary btn-lg btn-block" id="btn-join-signup">
+        <span class="btn-label">Create an account</span>
+        <span class="btn-sub">Save your scores and round history</span>
+      </button>
+      <button type="button" class="btn btn-secondary btn-lg btn-block" id="btn-join-login">
+        <span class="btn-label">Log in</span>
+        <span class="btn-sub">Already have an account</span>
+      </button>
+      <div class="divider"><span>or</span></div>
+      <button type="button" class="link-btn link-btn-center" id="btn-join-guest">Continue as guest</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: RESET PASSWORD (set new) ============ -->
+  <section id="screen-reset-password" class="screen">
+    <div class="home-wrap">
+      <div class="brand">
+        <img src="Strokes_Golf_Logo_Transparent.png" alt="STROKES GOLF" class="brand-logo">
+      </div>
+      <h2 class="auth-heading">Set a new password</h2>
+      <form id="form-reset-password" class="auth-form">
+        <div class="field">
+          <label class="field-label" for="reset-password-new">New password</label>
+          <input type="password" id="reset-password-new" placeholder="••••••••" autocomplete="new-password" required
+            minlength="6">
+        </div>
+        <p class="auth-error" id="reset-password-error" hidden></p>
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Set password</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: HOME ============ -->
+  <section id="screen-home" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-open-drawer" aria-label="Open menu">☰</button>
+    </header>
+
+    <div class="home-wrap">
+      <div class="brand">
+        <img src="Strokes_Golf_Logo_Transparent.png" alt="STROKES GOLF" class="brand-logo">
+        <p class="brand-tag">Built for the Match.</p>
+      </div>
+
+      <div class="home-actions">
+        <button class="btn btn-primary btn-lg" id="btn-new-round">
+          <span class="btn-label">Start a round</span>
+          <span class="btn-sub">Set the course, invite your group</span>
+        </button>
+
+        <button class="btn btn-primary btn-lg" id="btn-new-tournament">
+          <span class="btn-label">Start a Tournament</span>
+          <span class="btn-sub">Set the course, invite multiple groups</span>
+        </button>
+
+        <div class="divider"><span>or</span></div>
+
+        <form id="form-join" class="join-form">
+          <label class="field-label" for="join-code">Join an existing round</label>
+          <div class="join-row">
+            <input type="text" id="join-code" maxlength="5" placeholder="ROUND CODE" autocomplete="off"
+              autocapitalize="characters" spellcheck="false">
+            <button type="submit" class="btn btn-secondary">Join</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+
+    <aside class="drawer" id="app-drawer" aria-hidden="true">
+      <div class="drawer-header">
+        <img src="Strokes_Golf_Logo_Transparent.png" alt="STROKES GOLF" class="drawer-logo">
+        <p class="drawer-user-name" id="drawer-user-name" hidden></p>
+        <p class="drawer-user-handle" id="drawer-user-handle" hidden></p>
+        <p class="drawer-user-hcp" id="drawer-user-hcp" hidden></p>
+      </div>
+      <div class="drawer-nudge" id="drawer-username-nudge" hidden>
+        <button class="drawer-nudge-text" id="btn-username-nudge" type="button">Pick a username so friends can find
+          you</button>
+        <button class="drawer-nudge-dismiss" id="btn-username-nudge-dismiss" type="button"
+          aria-label="Dismiss">×</button>
+      </div>
+      <nav class="drawer-nav">
+        <button class="drawer-item" id="btn-friends" type="button">
+          <img class="drawer-item-icon" src="assets/icons/cartners.svg" alt=""> Friends
+        </button>
+        <button class="drawer-item" id="btn-round-history" type="button">
+          <img class="drawer-item-icon" src="assets/icons/scorecard.svg" alt=""> View Rounds
+        </button>
+        <button class="drawer-item" id="btn-manage-courses" type="button">
+          <img class="drawer-item-icon" src="assets/icons/green-bunkers.svg" alt=""> View courses
+        </button>
+        <button class="drawer-item" id="btn-manage-profile" type="button">
+          <span class="drawer-item-icon">👤</span> Manage profile
+        </button>
+        <button class="drawer-item" id="btn-feedback" type="button">
+          <span class="drawer-item-icon">💬</span> Send Feedback
+        </button>
+      </nav>
+      <div class="drawer-footer">
+        <button class="drawer-item drawer-item-muted" id="btn-logout" type="button">
+          <span class="drawer-item-icon">⏻</span>
+          <span class="drawer-logout-text">
+            <span class="drawer-logout-label">Log out</span>
+            <span class="drawer-logout-email" id="auth-user-email"></span>
+          </span>
+        </button>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ============ FEEDBACK MODAL ============ -->
+  <div class="feedback-modal" id="feedback-modal" hidden>
+    <div class="feedback-card" role="dialog" aria-modal="true" aria-labelledby="feedback-title">
+      <div class="feedback-head">
+        <h3 class="feedback-title" id="feedback-title">Send feedback</h3>
+        <button class="icon-btn" id="btn-feedback-close" aria-label="Close">×</button>
+      </div>
+      <p class="field-hint">Tell us what's working, what's not, or what you'd like to see. This opens your email app,
+        addressed to strokesadmin@gmail.com with your note filled in — just hit send there.</p>
+      <textarea id="feedback-message" class="feedback-textarea" placeholder="What's on your mind?" rows="6"></textarea>
+      <button class="btn btn-primary btn-block" id="btn-feedback-send" type="button">Open email to send</button>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN: RESUME ROUND ============ -->
+  <section id="screen-resume-rounds" class="screen">
+    <header class="topbar">
+      <span class="topbar-spacer"></span>
+      <h2 class="topbar-title">Resume a round</h2>
+      <button class="icon-btn" id="btn-resume-rounds-close" aria-label="Cancel">✕</button>
+    </header>
+
+    <div class="screen-body">
+      <div id="resume-rounds-list" class="history-list"></div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: COURSE UPLOAD ============ -->
+  <section id="screen-course-upload" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-course-upload-back" aria-label="Back">←</button>
+      <h2 class="topbar-title" id="course-upload-heading">Upload a course</h2>
+      <span class="topbar-spacer"></span>
+    </header>
+
+    <div class="screen-body">
+      <div class="field">
+        <label class="field-label" for="course-search">Search Courses</label>
+        <div class="course-search-wrapper">
+          <div class="course-search-row">
+            <input type="text" id="course-search" placeholder="Search by course name or location" autocomplete="off">
+            <button type="button" class="btn btn-secondary course-search-btn" id="btn-course-search">Search</button>
+          </div>
+          <div id="course-search-results" class="search-results-dropdown" hidden></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="course-upload-name">Course name</label>
+        <input type="text" id="course-upload-name" placeholder="e.g. Bobby Jones Golf Course">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="course-upload-location">Location</label>
+        <input type="text" id="course-upload-location" placeholder="e.g. Clemson, SC">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="course-hole-count">Holes</label>
+          <select id="course-hole-count">
+            <option value="18">18 holes</option>
+            <option value="9">9 holes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Par &amp; handicap per hole</label>
+        <p class="field-hint">"Handicap" is the hole's difficulty ranking (1 = hardest) — the same number printed on
+          most scorecards. Each ranking should be used exactly once.</p>
+        <div id="course-hole-grid" class="course-hole-grid"></div>
+      </div>
+
+      <button class="btn btn-primary btn-lg btn-block" id="btn-save-course">Save course</button>
+      <button class="btn btn-secondary btn-block" id="btn-save-course-start-round" disabled>Save &amp; start a round
+        with this course</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: MANAGE COURSES ============ -->
+  <section id="screen-course-manage" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-course-manage-back" aria-label="Back">←</button>
+      <h2 class="topbar-title">View courses</h2>
+      <span class="topbar-spacer"></span>
+    </header>
+
+    <div class="screen-body">
+      <div class="screen-body">
+        <div class="course-filter-wrap">
+          <input type="text" id="course-filter-input" class="course-filter-input"
+            placeholder="Search Downloaded Courses" autocomplete="off">
+        </div>
+        <div id="course-manage-list" class="course-manage-list"></div>
+        <button class="btn btn-secondary btn-block" id="btn-manage-add-course" type="button">+ Upload a course</button>
+      </div>
+  </section>
+
+  <!-- ============ SCREEN: COURSE DETAIL (read-only) ============ -->
+  <section id="screen-course-detail" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-course-detail-back" aria-label="Back">←</button>
+      <h2 class="topbar-title">Course</h2>
+      <span class="topbar-spacer"></span>
+    </header>
+
+    <div class="screen-body">
+      <div class="course-detail-header">
+        <span class="course-detail-name" id="course-detail-name"></span>
+        <span class="course-detail-meta" id="course-detail-meta"></span>
+      </div>
+      <div class="course-detail-scorecard" id="course-detail-scorecard"></div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: ROUND HISTORY ============ -->
+  <section id="screen-profile" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-profile-back" aria-label="Back">←</button>
+      <h2 class="topbar-title">Manage profile</h2>
+      <span class="topbar-spacer"></span>
+    </header>
+
+    <div class="screen-body">
+      <form id="form-profile" class="auth-form">
+        <div class="field">
+          <label class="field-label" for="profile-name">Name</label>
+          <input type="text" id="profile-name" placeholder="e.g. Hunter" autocomplete="name">
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="profile-username">Username</label>
+          <div class="username-input">
+            <span class="username-at">@</span>
+            <input type="text" id="profile-username" placeholder="hunterb" autocomplete="off" autocapitalize="none"
+              spellcheck="false" maxlength="20">
+          </div>
+          <p class="field-hint">Lowercase letters, numbers, and underscores (3–20). This is how friends find and add you
+            to rounds.</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="profile-handicap">Handicap</label>
+          <input type="number" id="profile-handicap" placeholder="e.g. 10.2" inputmode="decimal" step="0.1" min="0"
+            max="54">
+          <p class="field-hint">Your default handicap — pre-fills when you start or join a round. Leave blank for 0.</p>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="profile-city">City</label>
+            <input type="text" id="profile-city" placeholder="e.g. Atlanta" autocomplete="address-level2">
+          </div>
+          <div class="field">
+            <label class="field-label" for="profile-state">State</label>
+            <select id="profile-state" autocomplete="address-level1">
+              <option value="">—</option>
+            </select>
+          </div>
+        </div>
+
+        <p class="auth-error" id="profile-error" hidden></p>
+        <button type="submit" class="btn btn-primary btn-lg btn-block" id="btn-profile-save">
+          <span class="btn-label">Save profile</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: FRIENDS ============ -->
+  <section id="screen-friends" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-friends-back" aria-label="Back">←</button>
+      <h2 class="topbar-title">Friends</h2>
+      <span class="topbar-spacer"></span>
+    </header>
+
+    <div class="screen-body">
+      <div class="field">
+        <label class="field-label" for="friend-search">Add a friend</label>
+        <input type="text" id="friend-search" placeholder="Search by @username or name" autocomplete="off"
+          autocapitalize="none" spellcheck="false">
+        <div id="friend-search-results" class="friend-search-results"></div>
+      </div>
+
+      <div class="friends-section" id="friend-requests-section" hidden>
+        <p class="field-label">Requests</p>
+        <div id="friend-requests-list" class="friends-list"></div>
+      </div>
+
+      <div class="friends-section">
+        <p class="field-label">Your friends</p>
+        <div id="friends-list" class="friends-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Friend picker (used by round setup) -->
+  <div class="friend-picker-modal" id="friend-picker-modal" hidden>
+    <div class="friend-picker-card" role="dialog" aria-modal="true" aria-labelledby="friend-picker-title">
+      <div class="friend-picker-head">
+        <p class="friend-picker-title" id="friend-picker-title">Add from friends</p>
+        <button class="icon-btn" id="btn-friend-picker-close" aria-label="Close">×</button>
+      </div>
+      <div class="friend-picker-list" id="friend-picker-list"></div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN: VIEW ROUNDS ============ -->
+  <section id="screen-history" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-history-back" aria-label="Back">←</button>
+      <h2 class="topbar-title">View Rounds</h2>
+      <span class="topbar-spacer"></span>
+    </header>
+
+    <div class="screen-body">
+      <nav class="modetab-row" id="view-rounds-tab-row">
+        <button class="modetab active" data-view-rounds-tab="completed" type="button">Completed Rounds</button>
+        <button class="modetab" data-view-rounds-tab="inprogress" type="button">In Progress Rounds</button>
+      </nav>
+
+      <div id="tab-completed-rounds">
+        <div id="history-list" class="history-list"></div>
+      </div>
+
+      <div id="tab-inprogress-rounds" hidden>
+        <div id="inprogress-list" class="history-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Confirm popup for resuming a round tapped from the In Progress Rounds list -->
+  <div class="hole15-modal" id="resume-list-confirm-modal" hidden>
+    <div class="hole15-modal-card" role="dialog" aria-modal="true" aria-labelledby="resume-list-confirm-title">
+      <p class="hole15-modal-title" id="resume-list-confirm-title">Do you want to resume this round?</p>
+      <div class="resume-prompt-actions">
+        <button class="btn btn-secondary" id="btn-resume-list-confirm-no" type="button">No</button>
+        <button class="btn btn-primary" id="btn-resume-list-confirm-yes" type="button">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm popup for cancelling a round early (lobby, live round, or the In Progress list) -->
+  <div class="hole15-modal" id="cancel-round-confirm-modal" hidden>
+    <div class="hole15-modal-card" role="dialog" aria-modal="true" aria-labelledby="cancel-round-confirm-title">
+      <p class="hole15-modal-title" id="cancel-round-confirm-title">Cancel this round? Scores entered so far are saved
+        to your history, but the round can't be resumed.</p>
+      <div class="resume-prompt-actions">
+        <button class="btn btn-secondary" id="btn-cancel-round-confirm-no" type="button">Keep round</button>
+        <button class="btn btn-danger" id="btn-cancel-round-confirm-yes" type="button">Cancel round</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN: ROUND HISTORY DETAIL ============ -->
+  <section id="screen-history-detail" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-history-detail-back" aria-label="Back">←</button>
+      <h2 class="topbar-title">Round detail</h2>
+      <span class="topbar-spacer"></span>
+    </header>
+
+    <div class="screen-body">
+      <div class="history-detail-header">
+        <span class="history-detail-course" id="history-detail-course"></span>
+        <span class="history-detail-meta" id="history-detail-meta"></span>
+      </div>
+      <nav class="modetab-row" id="history-mode-row"></nav>
+      <div class="board-meta" id="history-detail-meta-line"></div>
+      <div class="leaderboard" id="history-detail-board"></div>
+      <div class="history-scorecard" id="history-scorecard"></div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: FRIEND ROUNDS ============ -->
+  <section id="screen-friend-rounds" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-friend-rounds-back" aria-label="Back">←</button>
+      <h2 class="topbar-title">Rounds</h2>
+      <span class="round-logo-mark" role="img" aria-label="GolfScore"></span>
+    </header>
+
+    <div class="screen-body">
+      <div class="friend-rounds-header">
+        <span class="friend-rounds-name" id="friend-rounds-name"></span>
+        <span class="friend-rounds-handle" id="friend-rounds-handle"></span>
+        <span class="friend-rounds-hcp" id="friend-rounds-hcp"></span>
+      </div>
+      <nav class="tabbar" id="friend-rounds-tabbar">
+        <button class="tab active" data-friend-rounds-tab="with-me" type="button">Rounds with me</button>
+        <button class="tab" data-friend-rounds-tab="all" type="button">All rounds</button>
+      </nav>
+      <div id="friend-rounds-list" class="history-list"></div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: NEW ROUND SETUP ============ -->
+  <section id="screen-setup" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-setup-back" aria-label="Back">←</button>
+      <h2 class="topbar-title">New round</h2>
+      <span class="topbar-spacer"></span>
+    </header>
+    <div class="screen-body">
+      <p id="setup-locked-hint" class="field-hint" hidden>Course, hole count, and pars are locked once the round is live.</p>
+      <div class="field">
+        <label class="field-label" for="setup-course-search">Course</label>
+        <div class="course-search-wrapper">
+          <div class="course-search-row">
+            <input type="text" id="setup-course-search" placeholder="Search Courses" autocomplete="off">
+            <button type="button" class="btn btn-secondary course-search-btn"
+              id="btn-setup-course-search">Search</button>
+          </div>
+          <div id="setup-course-search-results" class="search-results-dropdown" hidden></div>
+        </div>
+        <p class="field-hint">Search by course name or location, then pick a result to auto-fill pars and handicaps. If
+          the search doesn't yield any results, choose "Enter this course manually" to fill it in yourself.</p>
+      </div>
+      <div class="field" id="nine-select-field" hidden>
+        <span class="field-label">Which nine?</span>
+        <p class="field-hint">This course has 18 holes — pick which nine you're playing.</p>
+        <div class="nine-toggle">
+          <button type="button" class="btn btn-secondary nine-btn" id="btn-nine-front" data-nine="front">Front 9
+            (1–9)</button>
+          <button type="button" class="btn btn-secondary nine-btn" id="btn-nine-back" data-nine="back">Back 9
+            (10–18)</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="course-name">Course name</label>
+        <input type="text" id="course-name" placeholder="e.g. Bobby Jones Golf Course">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="hole-count">Holes</label>
+          <select id="hole-count">
+            <option value="18">18 holes</option>
+            <option value="9">9 holes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <details class="course-details">
+          <summary class="course-details-summary">View course details</summary>
+          <p class="field-hint">Leave blank to default every hole to par 4. You can fix this later from the scorecard.</p>
+          <div id="par-grid" class="par-grid"></div>
+        </details>
+      </div>
+
+      <div class="field">
+        <div class="bet-toggle-card">
+          <div>
+            <span class="bet-toggle-title">Bets</span>
+            <span class="bet-toggle-sub">Play this round for money</span>
+          </div>
+          <label class="bet-switch">
+            <input type="checkbox" id="bets-enabled">
+            <span class="bet-track"></span>
+          </label>
+        </div>
+        <div class="field" id="set-stakes-field" hidden>
+          <button type="button" class="btn btn-secondary btn-block" id="btn-set-stakes">Set stakes →</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Game modes for this round</span>
+        <p class="field-hint">Pick as many as you're playing. The leaderboard will show a tab for each.</p>
+        <div class="mode-grid" id="mode-grid">
+          <label class="mode-card checked">
+            <input type="checkbox" name="mode" value="gross" checked disabled>
+            <span class="mode-name">Gross</span>
+            <span class="mode-desc">Raw strokes. Always on.</span>
+          </label>
+          <label class="mode-card">
+            <input type="checkbox" name="mode" value="net">
+            <span class="mode-name">Net (handicap)</span>
+            <span class="mode-desc">Strokes minus handicap, allocated by hole difficulty.</span>
+          </label>
+          <label class="mode-card">
+            <input type="checkbox" name="mode" value="stableford">
+            <span class="mode-name">Stableford</span>
+            <span class="mode-desc">Points per hole based on net score vs par.</span>
+          </label>
+          <label class="mode-card tournament-only" hidden>
+            <input type="checkbox" name="mode" value="bestball">
+            <span class="mode-name">Team Best Ball</span>
+            <span class="mode-desc">Lowest net among teammates counts on each hole, summed for the team.</span>
+          </label>
+          <label class="mode-card regular-only">
+            <input type="checkbox" name="mode" value="skins">
+            <span class="mode-name">Skins</span>
+            <span class="mode-desc">Lowest net wins the hole; ties carry to the next.</span>
+          </label>
+          <label class="mode-card">
+            <input type="checkbox" name="mode" value="match">
+            <span class="mode-name">Match play</span>
+            <span class="mode-desc">Head-to-head holes won. 1v1, 1v2, 1v3, or 2v2 with best ball.</span>
+          </label>
+          <label class="mode-card regular-only">
+            <input type="checkbox" name="mode" value="sidematch">
+            <span class="mode-name">Side Match</span>
+            <span class="mode-desc">A separate head-to-head match between two players, alongside the main game.</span>
+          </label>
+          <label class="mode-card regular-only">
+            <input type="checkbox" name="mode" value="nassau">
+            <span class="mode-name">Nassau</span>
+            <span class="mode-desc">Front 9, back 9, and full 18 — three matches in one round. Team A vs Team B.</span>
+          </label>
+          <label class="mode-card regular-only">
+            <input type="checkbox" name="mode" value="sixes">
+            <span class="mode-name">Sixes</span>
+            <span class="mode-desc">Four players, three 6-hole matches, partners rotate each six. 18 holes only.</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field" id="sixes-field" hidden>
+        <label class="field-label">Sixes: seat the four players</label>
+        <p class="field-hint">Pick exactly four players and their seat order — partners rotate every six holes (1&2 v 3&4, then 1&3 v 2&4, then 1&4 v 2&3).</p>
+        <div id="sixes-assign-list" class="match-assign-list"></div>
+        <span class="field-label">Sixes format</span>
+        <div class="segmented" id="sixes-format">
+          <label class="segmented-option">
+            <input type="radio" name="sixes-format" value="match" checked>
+            <span>Match play</span>
+          </label>
+          <label class="segmented-option">
+            <input type="radio" name="sixes-format" value="stroke">
+            <span>Stroke play</span>
+          </label>
+        </div>
+        <label class="match-handicap-toggle">
+          <input type="checkbox" id="sixes-use-handicap" checked>
+          <span>Use handicap (net scores) for Sixes</span>
+        </label>
+      </div>
+
+      <div class="field" id="nassau-format-field" hidden>
+        <span class="field-label">Nassau format</span>
+        <p class="field-hint">All three (front, back, total) are scored this way.</p>
+        <div class="segmented" id="nassau-format">
+          <label class="segmented-option">
+            <input type="radio" name="nassau-format" value="match" checked>
+            <span>Match play</span>
+          </label>
+          <label class="segmented-option">
+            <input type="radio" name="nassau-format" value="stroke">
+            <span>Stroke play</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field" id="match-players-field" hidden>
+        <label class="field-label" id="match-players-label">Match play: assign teams</label>
+        <p class="field-hint">Pick 1-3 players per team — supports 1v1, 1v2, 1v3, or 2v2. Team A vs Team B.</p>
+        <div id="match-assign-list" class="match-assign-list"></div>
+        <label class="match-handicap-toggle">
+          <input type="checkbox" id="match-use-handicap" checked>
+          <span>Use handicap (net scores) for match play / Nassau</span>
+        </label>
+      </div>
+
+      <div class="field" id="sidematch-players-field" hidden>
+        <label class="field-label">Side match: assign teams</label>
+        <p class="field-hint">Usually two players (one on Team C, one on Team D), but supports up to 3 per side.</p>
+        <div id="sidematch-assign-list" class="match-assign-list"></div>
+        <label class="match-handicap-toggle">
+          <input type="checkbox" id="sidematch-use-handicap" checked>
+          <span>Use handicap (net scores) for the side match</span>
+        </label>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Players</label>
+        <p class="field-hint">Add everyone now, or just yourself — others can join with the round code and add
+          themselves.</p>
+        <div id="player-list" class="player-list"></div>
+        <button class="btn btn-secondary btn-block" id="btn-add-player" type="button">+ Add a player</button>
+        <button class="btn btn-secondary btn-block" id="btn-add-from-friends" type="button">+ From friends</button>
+      </div>
+
+      <div class="field tournament-only" id="tournament-teams-field" hidden>
+        <label class="field-label">Teams</label>
+        <p class="field-hint">Choose how many teams to split the field into, then put every player on a team. Mark one person per team as captain — captains can enter scores for their whole team.</p>
+        <div class="team-count-row">
+          <span class="team-count-label">Number of teams</span>
+          <div class="team-count-entry">
+            <button type="button" class="team-count-btn team-count-minus" aria-label="Decrease number of teams">−</button>
+            <span class="team-count-number" id="team-count-number">2</span>
+            <button type="button" class="team-count-btn team-count-plus" aria-label="Increase number of teams">+</button>
+          </div>
+        </div>
+        <label class="match-handicap-toggle">
+          <input type="checkbox" id="auto-assign-teams">
+          <span>Auto-assign teams</span>
+        </label>
+        <p class="field-hint" id="auto-assign-hint" hidden></p>
+        <div id="team-assign-list" class="match-assign-list"></div>
+      </div>
+
+      <div class="field tournament-only" id="tournament-match-field" hidden>
+        <label class="field-label">Match play pairings</label>
+        <p class="field-hint">Add a match for each head-to-head. Pick the two teams that face off — each match is scored like its own round.</p>
+        <div id="tournament-match-list"></div>
+        <button class="btn btn-secondary btn-block" id="btn-add-pairing" type="button">+ Add a match</button>
+        <label class="match-handicap-toggle">
+          <input type="checkbox" id="tournament-match-use-handicap" checked>
+          <span>Use handicap (net scores) for match play</span>
+        </label>
+      </div>
+
+      <button class="btn btn-primary btn-lg btn-block" id="btn-create-round">Create round &amp; get code</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: PLACE BETS (STAKES) ============ -->
+  <section id="screen-stakes" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-stakes-back" aria-label="Back">←</button>
+      <h2 class="topbar-title">Place your bets</h2>
+      <span class="topbar-spacer"></span>
+    </header>
+
+    <div class="screen-body">
+      <p class="field-hint">Set a dollar amount for each game you're playing this round.</p>
+      <div id="stakes-list" class="stakes-list"></div>
+      <button class="btn btn-primary btn-lg btn-block" id="btn-stakes-save">Save stakes</button>
+    </div>
+
+    <div class="bet-info-modal" id="bet-info-modal" hidden>
+      <div class="bet-info-card" role="dialog" aria-modal="true" aria-labelledby="bet-info-title">
+        <h3 class="bet-info-title" id="bet-info-title"></h3>
+        <p class="bet-info-body" id="bet-info-body"></p>
+        <button class="btn btn-secondary btn-block" id="btn-bet-info-close" type="button">Got it</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: LOBBY ============ -->
+  <section id="screen-lobby" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-lobby-leave" aria-label="Leave">←</button>
+      <h2 class="topbar-title" id="lobby-course-name">Round lobby</h2>
+      <span class="topbar-spacer"></span>
+    </header>
+
+    <div class="screen-body">
+      <div class="code-card">
+        <div class="code-card-info">
+          <p class="code-label">Round code</p>
+          <p class="code-display" id="lobby-code">—</p>
+          <p class="code-hint">Share with your group</p>
+        </div>
+        <button class="btn btn-secondary" id="btn-copy-code">Copy link</button>
+      </div>
+
+      <div class="field">
+        <div class="field-label-row">
+          <span class="field-label">Players in this round</span>
+          <span class="pill" id="lobby-player-count">0</span>
+        </div>
+        <div id="lobby-player-list" class="lobby-player-list"></div>
+        <button class="btn btn-secondary btn-block" id="btn-lobby-add-player" type="button">+ Add a player</button>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Game modes</span>
+        <div class="chip-row" id="lobby-modes"></div>
+      </div>
+
+      <div class="field" id="lobby-stakes-field" hidden>
+        <span class="field-label">Stakes</span>
+        <div id="lobby-stakes-list" class="lobby-stakes-list"></div>
+        <button type="button" class="btn btn-secondary btn-block" id="btn-edit-stakes">Edit stakes</button>
+      </div>
+
+      <button class="btn btn-primary btn-lg btn-block" id="btn-start-round">Start round</button>
+      <button class="btn btn-secondary btn-block btn-danger-outline" id="btn-revoke-invite" type="button"
+        hidden>Stop accepting joins</button>
+      <button class="btn btn-secondary btn-block btn-danger-outline" id="btn-cancel-round-lobby" type="button"
+        hidden>Cancel round</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: JOIN — pick yourself ============ -->
+  <section id="screen-identify" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-identify-back" aria-label="Back">←</button>
+      <h2 class="topbar-title" id="identify-course-name">Join round</h2>
+      <span class="topbar-spacer"></span>
+    </header>
+
+    <div class="screen-body">
+      <p class="field-hint">Which player are you? Or add yourself if you're not listed yet.</p>
+      <div id="identify-player-list" class="identify-player-list"></div>
+      <button class="btn btn-secondary btn-block" id="btn-identify-add-self" type="button">+ Add myself</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: ROUND ============ -->
+  <section id="screen-round" class="screen">
+    <div class="round-sticky-header">
+      <header class="topbar">
+        <div class="topbar-title-wrap">
+          <h2 class="topbar-title" id="round-course-name">Round</h2>
+          <p class="topbar-sub" id="round-meta">—</p>
+        </div>
+        <span class="round-logo-mark" role="img" aria-label="GolfScore"></span>
+      </header>
+
+      <nav class="tabbar" id="round-tabbar">
+        <button class="tab active" data-tab="card">Scorecard</button>
+        <button class="tab" data-tab="board">Leaderboard</button>
+      </nav>
+    </div>
+
+    <!-- SCORECARD TAB -->
+    <div class="tabpanel active" id="tab-card">
+      <div class="scorecard-controls">
+        <p class="field-label" id="scoring-for-label">Entering for you</p>
+        <select id="scoring-for-select" hidden></select>
+      </div>
+
+      <div class="hole-nav">
+        <button class="icon-btn" id="btn-hole-prev" aria-label="Previous hole">←</button>
+        <div class="hole-nav-center">
+          <p class="hole-nav-label">Hole</p>
+          <p class="hole-nav-number" id="hole-number">1</p>
+          <p class="hole-nav-meta">
+            <span class="hole-nav-stat" id="hole-par">Par 4</span>
+            <span class="hole-nav-stat" id="hole-handicap" hidden>Hcp 7</span>
+            <span class="hole-nav-stat" id="hole-score" hidden>Score 5</span>
+          </p>
+        </div>
+        <button class="icon-btn" id="btn-hole-next" aria-label="Next hole">→</button>
+      </div>
+
+      <div class="par-editor" id="par-editor" hidden>
+        <label class="field-label" for="par-editor-input">Set par for this hole</label>
+        <div class="join-row">
+          <input type="number" id="par-editor-input" inputmode="numeric" min="2" max="6">
+          <button class="btn btn-secondary" id="btn-par-save">Save</button>
+        </div>
+      </div>
+      <button class="link-btn" id="btn-par-toggle" type="button">Edit hole par</button>
+
+      <div class="stroke-entry">
+        <button class="stroke-btn stroke-minus" id="btn-stroke-minus" aria-label="Decrease strokes">−</button>
+        <div class="stroke-display">
+          <span class="stroke-badge"><span class="stroke-number" id="stroke-number">—</span></span>
+          <span class="stroke-caption" id="stroke-caption">Tap + to enter score</span>
+        </div>
+        <button class="stroke-btn stroke-plus" id="btn-stroke-plus" aria-label="Increase strokes">+</button>
+      </div>
+
+      <div class="putts-row" id="putts-row" style="display:none;"></div>
+
+      <div class="end-round-wrap" id="end-round-wrap" hidden>
+        <button class="btn btn-primary btn-block" id="btn-end-round" type="button">End Round</button>
+      </div>
+
+      <div class="my-progress">
+        <p class="field-label">Your round so far</p>
+        <div class="mini-holes" id="mini-holes"></div>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD TAB -->
+    <div class="tabpanel" id="tab-board">
+      <nav class="modetab-row" id="modetab-row"></nav>
+      <div class="board-meta" id="board-meta"></div>
+      <div class="leaderboard" id="leaderboard"></div>
+      <button class="link-btn link-btn-center" id="btn-round-feedback" type="button" hidden>Have feedback on this round? Let us know</button>
+    </div>
+
+    <footer class="round-footer">
+      <div class="round-footer-grid">
+        <button class="round-footer-btn" id="btn-round-leave" type="button" aria-label="Leave round">
+          <span class="round-footer-icon">←</span>
+          <span class="round-footer-label">Back</span>
+        </button>
+        <button class="round-footer-btn" id="btn-edit-round" type="button" aria-label="Edit round" hidden>
+          <span class="round-footer-icon">✏️</span>
+          <span class="round-footer-label">Edit round</span>
+        </button>
+        <button class="round-footer-btn" id="btn-round-share" type="button" aria-label="Share round">
+          <span class="round-footer-icon">📋</span>
+          <span class="round-footer-label">Share round</span>
+        </button>
+        <button class="round-footer-btn round-footer-btn-danger" id="btn-cancel-round" type="button" aria-label="Cancel round" hidden>
+          <span class="round-footer-icon">🚫</span>
+          <span class="round-footer-label">Cancel</span>
+        </button>
+      </div>
+    </footer>
+  </section>
+
+  <!-- Supabase client library (loaded from their CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <!-- Google/Apple sign-in JS SDKs (web only — the native iOS app uses
+       Capacitor plugins instead, see assets/auth.js). Harmless to also
+       load inside the native app; just never invoked there. -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" async></script>
+  <script src="assets/supabase-config.js"></script>
+  <script src="assets/golf.js"></script>
+  <script src="assets/core.js"></script>
+  <script src="assets/courses.js"></script>
+  <script src="assets/auth.js"></script>
+  <script src="assets/setup.js"></script>
+  <script src="assets/lobby.js"></script>
+  <script src="assets/round.js"></script>
+  <script src="assets/scorecard.js"></script>
+  <script src="assets/leaderboard.js"></script>
+  <script src="assets/history.js"></script>
+  <script src="assets/profile.js"></script>
+  <script src="assets/friends.js"></script>
+  <script src="assets/friend-rounds.js"></script>
+  <script src="assets/feedback.js"></script>
+  <script src="assets/resume.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+
+</html>

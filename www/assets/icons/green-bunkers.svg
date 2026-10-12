@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img">
+<defs><filter id="sticker" x="-30%" y="-30%" width="160%" height="160%">
+  <feMorphology in="SourceAlpha" operator="dilate" radius="2" result="dil"/>
+  <feFlood flood-color="#FFFFFF" result="wht"/>
+  <feComposite in="wht" in2="dil" operator="in" result="brd"/>
+  <feMerge result="art"><feMergeNode in="brd"/><feMergeNode in="SourceGraphic"/></feMerge>
+  <feDropShadow in="art" dx="0" dy="2" stdDeviation="1.8" flood-color="#0F231B" flood-opacity="0.22"/>
+</filter>
+<linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0" stop-color="#357B60"/><stop offset="1" stop-color="#1F4D3D"/>
+</linearGradient>
+<clipPath id="greenClip"><path d="M64,20 C84,20 104,28 104,42 C104,54 88,58 79,63 C88,68 104,72 104,84 C104,98 84,106 64,106 C44,106 24,98 24,84 C24,72 40,68 49,63 C40,58 24,54 24,42 C24,28 44,20 64,20 Z"/></clipPath></defs>
+<g filter="url(#sticker)">
+  <!-- fringe / collar of longer grass (same hourglass, scaled up) -->
+  <g transform="translate(64,63) scale(1.10) translate(-64,-63)">
+    <path d="M64,20 C84,20 104,28 104,42 C104,54 88,58 79,63 C88,68 104,72 104,84 C104,98 84,106 64,106 C44,106 24,98 24,84 C24,72 40,68 49,63 C40,58 24,54 24,42 C24,28 44,20 64,20 Z" fill="#3C8365"/>
+  </g>
+  <!-- side bunkers, nested in the waist pockets -->
+  <path d="M16,63 C16,54 22,49 31,50 C41,51 46,58 44,66 C42,75 31,78 24,73 C19,69 16,68 16,63 Z" fill="#E7D3A6" stroke="#CBB37E" stroke-width="1.4"/>
+  <path d="M22,63 C22,57 27,53 33,55 C39,57 41,63 38,68 C34,73 25,71 23,66 C22,65 22,64 22,63 Z" fill="#F1E3C0"/>
+  <path d="M112,63 C112,54 106,49 97,50 C87,51 82,58 84,66 C86,75 97,78 104,73 C109,69 112,68 112,63 Z" fill="#E7D3A6" stroke="#CBB37E" stroke-width="1.4"/>
+  <path d="M106,63 C106,57 101,53 95,55 C89,57 87,63 90,68 C94,73 103,71 105,66 C106,65 106,64 106,63 Z" fill="#F1E3C0"/>
+  <!-- putting green -->
+  <path d="M64,20 C84,20 104,28 104,42 C104,54 88,58 79,63 C88,68 104,72 104,84 C104,98 84,106 64,106 C44,106 24,98 24,84 C24,72 40,68 49,63 C40,58 24,54 24,42 C24,28 44,20 64,20 Z" fill="url(#greenGrad)"/>
+  <!-- mow stripes -->
+  <g clip-path="url(#greenClip)">
+    <rect x="34" y="16" width="12" height="94" fill="#FFFFFF" opacity="0.06"/>
+    <rect x="58" y="16" width="12" height="94" fill="#FFFFFF" opacity="0.06"/>
+    <rect x="82" y="16" width="12" height="94" fill="#FFFFFF" opacity="0.06"/>
+  </g>
+  <!-- hole cup in the lower lobe -->
+  <ellipse cx="64" cy="86" rx="6" ry="3.2" fill="#1B2A22"/>
+  <ellipse cx="64" cy="85.2" rx="3.6" ry="1.8" fill="#0F1913"/>
+  <!-- flag pole -->
+  <path d="M63.3,86 L63.3,30 L65.7,30 L65.7,86 Z" fill="#F5ECD9"/>
+  <path d="M64.7,30 L65.7,30 L65.7,86 L64.7,86 Z" fill="#C9BFA6"/>
+  <circle cx="64.5" cy="29.5" r="2.2" fill="#F5ECD9"/>
+  <!-- pennant -->
+  <path d="M65.7,30.5 L92,36 L65.7,43 Z" fill="#B5402F"/>
+  <path d="M65.7,36.7 L92,36 L65.7,43 Z" fill="#93331F"/>
+
+</g>
+</svg>

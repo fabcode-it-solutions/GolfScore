@@ -1,0 +1,18 @@
+{
+  "name": "golfscore",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "sync:ios": "rm -rf www/assets www/fonts www/scripts && cp -R assets fonts scripts index.html strokes_golf_logo_only.png Strokes_Golf_Logo_Transparent.png www/ && npx cap copy ios"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@capacitor/cli": "^8.5.1",
+    "@capacitor/core": "^8.5.1",
+    "@capacitor/ios": "^8.5.1",
+    "@capawesome/capacitor-google-sign-in": "^0.1.4",
+    "@capawesome/capacitor-apple-sign-in": "^0.1.4"
+  }
+}
