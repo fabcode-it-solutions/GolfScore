@@ -1,0 +1,3459 @@
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('../fonts/cormorant-garamond-v21-latin-300.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/cormorant-garamond-v21-latin-regular.woff2') format('woff2');
+}
+
+/* Real 500/600/700 cuts. If any of these files goes missing, comment its rule out
+   rather than leaving it declared: a declared @font-face whose file 404s drops that
+   weight to the Georgia fallback instead of synthesising bold from the 400 cut. */
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/cormorant-garamond-v21-latin-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/cormorant-garamond-v21-latin-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/cormorant-garamond-v21-latin-700.woff2') format('woff2');
+}
+
+/* ===========================================================
+   Fairway Live — visual identity
+   Palette: fairway green, bunker sand, scorecard cream, flag red
+   Type: Cormorant Garamond (self-hosted serif) across display, body,
+   and numerals — one --font-* token per role, all pointing at Cormorant Garamond
+=========================================================== */
+
+:root {
+  --fairway: #1F4D3D;
+  --fairway-dark: #163829;
+  --fairway-light: #2C6B53;
+  --sand: #D9C291;
+  --sand-light: #EFE6CC;
+  --cream: #F6F1E4;
+  --flag: #B5402F;
+  --flag-dark: #8C2F22;
+  --ink: #262420;
+  --ink-soft: #5B564C;
+  --ink-faint: #8C8676;
+  --line: #DDD4BD;
+  --white: #FFFFFF;
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Cormorant Garamond', Georgia, serif;
+  --font-mono: 'Cormorant Garamond', Georgia, serif;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  /* Cormorant Garamond defaults to old-style figures, which read as uneven in a
+     scoring UI. Force lining (uniform-height) + tabular (column-aligned) numerals
+     everywhere so scores line up on the scorecard and leaderboard. */
+  font-variant-numeric: lining-nums tabular-nums;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+body {
+  max-width: 560px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  /* In the Capacitor iOS wrapper the page runs edge-to-edge behind the
+     Dynamic Island/notch. `env(safe-area-inset-*)` has been observed
+     reporting 0 in that WKWebView regardless of viewport-fit=cover, so
+     SceneDelegate.swift reads the real inset from UIKit natively and sets
+     --native-safe-area-top/bottom on the document element instead. Falls
+     back to env() (0 in a regular browser tab) when nothing has set the
+     native custom property, so this is a no-op on the web. */
+  padding-top: var(--native-safe-area-top, env(safe-area-inset-top));
+  padding-bottom: var(--native-safe-area-bottom, env(safe-area-inset-bottom));
+}
+
+button {
+  font-family: var(--font-body);
+}
+
+input,
+select {
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  margin: 0;
+  color: var(--ink);
+}
+
+/* ---------- Screens ---------- */
+.screen {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.screen.active {
+  display: flex;
+}
+
+.screen-body {
+  padding: 1.25rem 1.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ---------- Home ---------- */
+.home-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  gap: 2.5rem;
+}
+
+.brand {
+  text-align: center;
+}
+
+.brand-logo {
+  width: 300px;
+  height: auto;
+  display: block;
+  margin: 0 auto 0.5rem;
+}
+}
+
+.brand-tag {
+  margin: 0.4rem 0 0;
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+
+#screen-home .brand-tag {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.home-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid var(--line);
+}
+
+.divider span {
+  padding: 0 0.75rem;
+}
+
+.join-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.join-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.join-row input {
+  flex: 1;
+}
+
+.course-search-wrapper {
+  position: relative;
+}
+
+.course-search-wrapper input {
+  width: 100%;
+}
+
+.course-search-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.course-search-row input {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+}
+
+.course-search-row .course-search-btn {
+  flex: none;
+  width: auto;
+  white-space: nowrap;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.search-results-dropdown {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background: var(--cream);
+}
+
+.search-result-item.manual {
+  border-left: 3px solid var(--line);
+  font-weight: 600;
+}
+
+.search-result-empty {
+  padding: 0.75rem 0.9rem;
+  color: var(--ink-faint);
+  font-size: 14px;
+}
+
+.home-footnote {
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 13px;
+  margin: 0;
+}
+
+.hole15-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 20, 16, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1100;
+}
+
+.hole15-modal-card {
+  width: min(100%, 320px);
+  background: var(--cream);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+  padding: 1.25rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.hole15-modal-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--fairway-dark);
+}
+
+.resume-prompt-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.resume-prompt-actions .btn {
+  flex: 1;
+}
+
+.resume-round-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  width: 100%;
+  text-align: left;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.8rem 0.95rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.resume-round-card:active {
+  background: var(--sand-light);
+}
+
+.resume-round-course {
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--ink);
+}
+
+.resume-round-location {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.resume-round-date {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+}
+
+/* ---------- Auth screen ---------- */
+.auth-tabs {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--sand-light);
+  border-radius: var(--radius-md);
+  padding: 0.25rem;
+}
+
+.auth-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 0.6rem 0.5rem;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink-faint);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.auth-tab.active {
+  background: var(--white);
+  color: var(--fairway-dark);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-error {
+  color: var(--flag);
+  font-size: 13px;
+  margin: -0.4rem 0 0;
+}
+
+.auth-heading {
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  margin: 0.5rem 0 0;
+}
+
+.auth-subtext {
+  font-size: 14px;
+  color: var(--ink-faint);
+  text-align: center;
+  margin: 0 0 0.5rem;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 0.85rem 1.25rem;
+  transition: transform 0.08s ease, opacity 0.15s ease;
+  font-family: var(--font-body);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--fairway);
+  color: var(--cream);
+}
+
+.btn-primary:hover {
+  background: var(--fairway-dark);
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--fairway);
+  border: 1.5px solid var(--fairway);
+}
+
+.btn-dark {
+  background: var(--ink-soft);
+  color: var(--cream);
+}
+
+.btn-danger {
+  background: var(--flag);
+  color: var(--white);
+}
+
+.btn-danger:hover {
+  background: var(--flag-dark);
+}
+
+.btn-danger-outline {
+  background: var(--white);
+  color: var(--flag);
+  border: 1.5px solid var(--flag);
+}
+
+/* ---------- Cancel affordances on history / in-progress cards ---------- */
+.history-card-cancel {
+  flex: none;
+  font-size: 15px;
+  width: 34px;
+  height: 34px;
+}
+
+.history-card-cancelled-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--flag);
+  background: var(--sand-light);
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  white-space: nowrap;
+}
+
+.btn-dark:hover {
+  background: var(--ink);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:disabled:active {
+  transform: none;
+}
+
+/* ---------- Manage courses screen ---------- */
+.course-filter-wrap {
+  margin-bottom: 0.85rem;
+}
+
+.course-filter-input {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-family: var(--font-body);
+  background: var(--white);
+  color: var(--ink);
+}
+
+.course-filter-input:focus {
+  outline: none;
+  border-color: var(--fairway);
+}
+
+.course-filter-input::placeholder {
+  color: var(--ink-faint);
+}
+
+.course-manage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.course-manage-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.9rem;
+}
+
+.course-manage-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.course-manage-name {
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.course-manage-meta {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+}
+
+.course-manage-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex: none;
+}
+
+.course-manage-actions .icon-btn {
+  background: var(--sand-light);
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+}
+
+.course-manage-empty {
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 14px;
+  padding: 2rem 1rem;
+}
+
+.course-manage-row {
+  cursor: pointer;
+}
+
+.course-manage-info:focus-visible {
+  outline: 2px solid var(--fairway);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.course-manage-chevron {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink-faint);
+  padding: 0 0.15rem;
+}
+
+/* ---------- Course detail (read-only) ---------- */
+.course-detail-header {
+  margin-bottom: 1rem;
+}
+
+.course-detail-name {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--ink);
+}
+
+.course-detail-meta {
+  display: block;
+  margin-top: 0.15rem;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+.course-detail-scorecard {
+  margin-top: 0.5rem;
+}
+
+.sc-summarycol {
+  background: var(--cream);
+  font-weight: 700;
+}
+
+.course-detail-scorecard .scorecard-scroll+.scorecard-scroll {
+  margin-top: 0.85rem;
+}
+
+.course-detail-total {
+  margin-top: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--ink-soft);
+  text-align: right;
+}
+
+.course-detail-total strong {
+  color: var(--ink);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-lg {
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.btn-lg .btn-label {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.btn-lg .btn-sub {
+  font-size: 12.5px;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+/* Social sign-in buttons (Google/Apple): icon + label side by side,
+   rather than .btn-lg's default stacked label/sub layout. */
+.btn-social.btn-lg {
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.65rem;
+}
+
+.btn-social .btn-icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--fairway);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  align-self: flex-start;
+}
+
+.link-btn-center {
+  align-self: center;
+}
+
+.host-edit-hint {
+  margin: 0.2rem 0 0;
+  font-size: 12.5px;
+  color: var(--fairway);
+  font-weight: 600;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--ink);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.icon-btn:active {
+  background: var(--sand-light);
+}
+
+.icon-btn.icon-btn-labeled {
+  width: auto;
+  height: 44px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  border-radius: var(--radius-sm);
+  padding: 0 0.5rem;
+}
+
+.icon-btn-labeled .icon-btn-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.icon-btn-labeled .icon-btn-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--cream);
+}
+
+/* ---------- Topbar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  background: var(--cream);
+  color: var(--fairway);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar .icon-btn {
+  color: var(--fairway);
+}
+
+.topbar-title {
+  flex: 1;
+  font-size: 18px;
+  color: var(--fairway);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar-title-wrap {
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+}
+
+.topbar-title-wrap .topbar-title {
+  text-align: center;
+}
+
+.topbar-sub {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--fairway-light);
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
+}
+
+.topbar-spacer {
+  width: 36px;
+}
+
+/* Home screen: no header bar at all — just the drawer (☰) icon floating over
+   the cream page. */
+#screen-home .topbar {
+  background: transparent;
+  border-bottom: none;
+  padding: 0.85rem 0.75rem;
+}
+
+/* Round screen banner: left-aligned and a touch larger than the shared
+   (centered) topbar, matching the design reference. Scoped to #screen-round
+   so the other screens' topbars keep their centered layout. */
+#screen-round .topbar {
+  padding: 1.15rem 1.25rem 1.3rem;
+}
+
+#screen-round .topbar-title-wrap,
+#screen-round .topbar-title {
+  text-align: left;
+}
+
+#screen-round .topbar-title {
+  font-size: 23px;
+}
+
+#screen-round .topbar-sub {
+  font-size: 13.5px;
+  margin-top: 0.15rem;
+}
+
+/* Brand emblem in the top-right of the round header (above the tab selector),
+   shown on both the scorecard and leaderboard tabs. */
+.round-logo-mark {
+  flex: none;
+  align-self: flex-start;
+  display: inline-block;
+  width: 31px;
+  height: 46px;
+  /* The emblem asset carries wide transparent padding around the mark, so we
+     crop to just the emblem via a scaled background instead of scaling the
+     whole file. The mark is ~274x432 at offset 1572,756 within 3420x2214; the
+     crop keeps a ~20px source-pixel margin on every side so nothing clips. */
+  background: url('../strokes_golf_logo_only.png') -151px -72px / 333px 216px no-repeat;
+}
+
+/* ---------- Home sidebar drawer ---------- */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 40;
+}
+
+.drawer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 78%;
+  max-width: 300px;
+  background: var(--cream);
+  box-shadow: 2px 0 16px rgba(0, 0, 0, 0.25);
+  transform: translateX(-100%);
+  transition: transform 0.22s ease;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  padding: 1.5rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.drawer-logo {
+  width: 160px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.drawer-user-name {
+  margin: 0.75rem 0 0;
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--fairway);
+}
+
+.drawer-user-handle {
+  margin: 0.2rem 0 0;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+.drawer-user-hcp {
+  margin: 0.1rem 0 0;
+  text-align: left;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+}
+
+.drawer-nav {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 0.5rem 0;
+}
+
+.drawer-footer {
+  border-top: 1px solid var(--line);
+  padding: 0.5rem 0;
+}
+
+.drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.9rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.drawer-item:active {
+  background: var(--sand-light);
+}
+
+.drawer-item-icon {
+  font-size: 18px;
+  width: 22px;
+  text-align: center;
+}
+
+/* SVG icons (drawer nav) sit a touch larger than the emoji they replace and
+   keep a fixed square footprint so labels stay aligned. */
+img.drawer-item-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex: none;
+}
+
+.drawer-item-muted {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.drawer-logout-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.drawer-logout-email {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Round history ---------- */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.history-empty {
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 14px;
+  padding: 2.5rem 1rem;
+  line-height: 1.5;
+}
+
+.history-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1rem;
+}
+
+.history-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.history-card-course {
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-card-meta {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+}
+
+.history-card-player {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 0.1rem;
+}
+
+.history-card-score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: none;
+}
+
+.history-card-gross {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.history-card-topar {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 0.15rem;
+  color: var(--ink-faint);
+}
+
+.history-card-topar.neg {
+  color: var(--fairway-light);
+}
+
+.history-card-topar.pos {
+  color: var(--flag);
+}
+
+/* Tappable history cards */
+.history-card {
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.history-card:active {
+  background: var(--sand-light);
+}
+
+.history-card-main {
+  flex: 1;
+}
+
+.history-card-chevron {
+  flex: none;
+  color: var(--ink-faint);
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* Round detail screen */
+.history-detail-header {
+  margin-bottom: 1rem;
+}
+
+.history-detail-course {
+  display: block;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--ink);
+}
+
+.history-detail-meta {
+  display: block;
+  margin-top: 0.15rem;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+/* Friend-rounds screen: profile header above the All/With-me tabbar. */
+.friend-rounds-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 1rem 1.25rem 0.75rem;
+}
+
+.friend-rounds-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink);
+}
+
+.friend-rounds-handle {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.friend-rounds-hcp {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+.history-match-result {
+  text-align: center;
+  padding: 1.75rem 1rem;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.history-match-teams {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.history-match-vs {
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.history-match-outcome {
+  margin-top: 0.85rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--fairway);
+}
+
+.history-match-roster {
+  margin-top: 0.4rem;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+/* Read-only scorecard grid */
+.history-scorecard {
+  margin-top: 1.75rem;
+}
+
+.history-scorecard-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 0.6rem;
+}
+
+.scorecard-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.scorecard-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  background: var(--white);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.scorecard-table th,
+.scorecard-table td {
+  padding: 6px 6px;
+  text-align: center;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--line);
+}
+
+.sc-playercol {
+  font-weight: 700;
+  min-width: 46px;
+  max-width: 76px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sc-score {
+  min-width: 46px;
+}
+
+.sc-rowhead {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  text-align: left;
+  background: var(--sand-light);
+  border-right: 1px solid var(--line);
+  line-height: 1.1;
+}
+
+.sc-corner {
+  vertical-align: middle;
+  font-weight: 700;
+}
+
+.sc-holenum {
+  display: block;
+  font-weight: 700;
+}
+
+.sc-holepar {
+  display: block;
+  font-size: 10px;
+  color: var(--ink-faint);
+}
+
+.sc-subrow td,
+.sc-subrow .sc-holenum {
+  font-weight: 700;
+}
+
+.sc-subrow td,
+.sc-subrow .sc-rowhead {
+  background: var(--cream);
+}
+
+.sc-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 3px;
+}
+
+.sc-birdie {
+  border: 1.5px solid var(--flag);
+  border-radius: 50%;
+}
+
+.sc-eagle {
+  border: 1.5px solid var(--flag);
+  border-radius: 50%;
+  background: var(--flag);
+  color: var(--white);
+}
+
+.sc-bogey {
+  border: 1.5px solid var(--ink-soft);
+}
+
+.sc-double {
+  border: 1.5px solid var(--ink);
+  background: var(--ink);
+  color: var(--white);
+}
+
+.sc-me {
+  background: rgba(31, 77, 61, 0.06);
+}
+
+.scorecard-key {
+  margin-top: 0.6rem;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.sc-putt {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--fairway-light);
+  vertical-align: super;
+  margin-left: 1px;
+}
+
+/* ---------- Fields ---------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.field-row .field {
+  flex: 1;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.field-hint {
+  margin: -0.25rem 0 0;
+  font-size: 13px;
+  color: var(--ink-faint);
+  line-height: 1.4;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  border: 1.5px solid var(--line);
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.85rem;
+  font-size: 15px;
+  color: var(--ink);
+  width: 100%;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  outline: 2px solid var(--fairway-light);
+  outline-offset: 1px;
+}
+
+input::placeholder {
+  color: var(--ink-faint);
+}
+
+/* ---------- Username field (@ prefix) ---------- */
+/* The wrapper carries the border/focus so the @ and the input read as
+   one control. The stored value is the bare handle — the @ is display only. */
+.username-input {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--line);
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 0 0.85rem;
+  width: 100%;
+}
+
+.username-input:focus-within {
+  outline: 2px solid var(--fairway-light);
+  outline-offset: 1px;
+}
+
+.username-at {
+  color: var(--ink-faint);
+  font-size: 15px;
+  font-weight: 600;
+  padding-right: 0.1rem;
+  user-select: none;
+}
+
+.username-input input[type="text"] {
+  border: none;
+  background: transparent;
+  padding: 0.7rem 0;
+}
+
+.username-input input[type="text"]:focus {
+  outline: none;
+}
+
+#join-code {
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  letter-spacing: 2px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ---------- Par grid (setup) ---------- */
+/* Collapsible "View course details" disclosure on the setup screen — the pars
+   and hole handicaps live inside and only show once the summary is opened. */
+.course-details-summary {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--fairway);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0;
+}
+
+.course-details-summary::-webkit-details-marker {
+  display: none;
+}
+
+.course-details-summary::before {
+  content: "▸";
+  font-size: 11px;
+  transition: transform 0.15s ease;
+}
+
+.course-details[open] > .course-details-summary::before {
+  transform: rotate(90deg);
+}
+
+.course-details > .field-hint {
+  margin-top: 0.5rem;
+}
+
+.par-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+  margin-top: 0.5rem;
+}
+
+.par-cell {
+  background: var(--sand-light);
+  border: 1.5px solid transparent;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 3px;
+}
+
+.par-cell-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--ink-faint);
+  opacity: 0.85;
+}
+
+.par-cell-sublabel {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  line-height: 1.25;
+  margin-bottom: -1px;
+}
+
+.par-cell input {
+  text-align: center;
+  padding: 0.3rem 0.1rem;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+}
+
+/* ---------- Nine selector (round setup) ---------- */
+.nine-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.nine-toggle .nine-btn {
+  flex: 1;
+  min-width: 0;
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
+  font-size: 14px;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.nine-btn.selected {
+  background: var(--fairway);
+  color: var(--cream);
+  border-color: transparent;
+}
+
+/* ---------- Course hole grid (course upload screen) ---------- */
+.course-hole-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+.course-hole-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.4rem;
+}
+
+.course-hole-label {
+  font-size: 11px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+}
+
+.course-hole-cell input {
+  text-align: center;
+  padding: 0.4rem 0.25rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* ---------- Mode cards ---------- */
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+}
+
+.mode-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0.6rem;
+  row-gap: 0.1rem;
+  border: 1.5px solid var(--line);
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.9rem;
+  cursor: pointer;
+}
+
+.mode-card input {
+  grid-row: 1 / 3;
+  align-self: center;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--fairway);
+}
+
+.mode-card input:disabled {
+  opacity: 0.6;
+}
+
+.mode-icon {
+  display: none;
+}
+
+.mode-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.mode-desc {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+}
+
+.mode-card:has(input:checked),
+.mode-card.checked {
+  border-color: var(--fairway);
+  background: var(--sand-light);
+}
+
+/* ---------- Player list (setup) ---------- */
+.player-list,
+.lobby-player-list,
+.identify-player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.75rem;
+}
+
+.player-row input[type="text"] {
+  border: none;
+  padding: 0.2rem 0;
+  font-weight: 600;
+  flex: 1.4;
+}
+
+.player-row input[type="text"]:focus {
+  outline: none;
+}
+
+.player-row .hcp-input {
+  width: 64px;
+  flex: none;
+  text-align: center;
+  font-family: var(--font-mono);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.3rem;
+}
+
+.player-row .hcp-label {
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+
+.player-row-remove {
+  background: none;
+  border: none;
+  color: var(--flag);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 0.2rem;
+}
+
+.lobby-player-list .player-row,
+.identify-player-list .player-row {
+  justify-content: space-between;
+}
+
+.identify-player-list .player-row {
+  cursor: pointer;
+}
+
+.identify-player-list .player-row:active {
+  background: var(--sand-light);
+}
+
+.player-chip-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.player-chip-hcp {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  background: var(--sand-light);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+}
+
+.match-assign-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.match-assign-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.75rem;
+}
+
+.match-assign-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.match-assign-select {
+  width: auto;
+  flex: none;
+}
+
+/* Tournament: team-assignment row (team select + captain toggle) and the
+   manual match-pairing rows (two team selects + remove). */
+.team-assign-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: none;
+}
+.team-assign-select {
+  width: auto;
+  flex: none;
+}
+.team-captain-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.team-captain-label input {
+  width: 16px;
+  height: 16px;
+}
+.tournament-match-row {
+  gap: 0.5rem;
+}
+.tournament-match-row .pairing-select {
+  width: auto;
+  flex: 1;
+}
+.pairing-vs {
+  font-weight: 700;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.match-handicap-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.match-handicap-toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--fairway);
+}
+
+/* ---------- Bets toggle + stakes ---------- */
+.bet-toggle-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 0.9rem;
+}
+
+.bet-toggle-title {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.bet-toggle-sub {
+  display: block;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
+
+.bet-switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 26px;
+  flex: none;
+  cursor: pointer;
+}
+
+.bet-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.bet-track {
+  position: absolute;
+  inset: 0;
+  background: var(--line);
+  border-radius: 999px;
+  transition: background 0.15s ease;
+}
+
+.bet-track::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--white);
+  transition: transform 0.15s ease;
+}
+
+.bet-switch input:checked+.bet-track {
+  background: var(--fairway);
+}
+
+.bet-switch input:checked+.bet-track::before {
+  transform: translateX(20px);
+}
+
+.stakes-list,
+.lobby-stakes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stakes-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.8rem;
+}
+
+.stakes-row-name {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.stakes-row-sub {
+  display: block;
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-top: 1px;
+}
+
+.stakes-amount {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+
+.stakes-amount .cur {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--ink-faint);
+}
+
+.stakes-amount input {
+  width: 74px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  padding: 0.4rem 0.5rem;
+}
+
+.lobby-stakes-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.lobby-stakes-amt {
+  font-family: var(--font-mono);
+  color: var(--fairway);
+}
+
+.lb-score.money-up {
+  color: var(--fairway);
+}
+
+.lb-score.money-down {
+  color: var(--flag);
+}
+
+.money-settle {
+  margin-top: 1rem;
+  border-top: 1.5px solid var(--line);
+  padding-top: 0.85rem;
+}
+
+.money-settle-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 0.6rem;
+}
+
+.money-settle-empty {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+.money-settle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.money-arrow {
+  color: var(--ink-faint);
+  font-style: normal;
+}
+
+.money-settle-amt {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  color: var(--fairway);
+}
+
+.money-breakdown {
+  margin-top: 1rem;
+  border-top: 1.5px solid var(--line);
+  padding-top: 0.85rem;
+}
+
+.money-mode {
+  margin-bottom: 0.9rem;
+}
+
+.money-mode:last-child {
+  margin-bottom: 0;
+}
+
+.money-mode-head {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.money-mode-rule {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  line-height: 1.45;
+  margin: 2px 0 7px;
+}
+
+.money-mode-nets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.money-chip {
+  font-size: 12.5px;
+  background: var(--sand-light);
+  border-radius: 999px;
+  padding: 3px 10px;
+  color: var(--ink-soft);
+}
+
+.money-chip b {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.money-chip-up b {
+  color: var(--fairway);
+}
+
+.money-chip-down b {
+  color: var(--flag);
+}
+
+/* ---------- Stakes info link + dialog ---------- */
+.stakes-info-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  padding: 2px 0 0;
+  margin-top: 1px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--fairway);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.stakes-info-icon {
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.bet-info-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 20, 16, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1100;
+}
+
+.bet-info-card {
+  width: min(100%, 340px);
+  background: var(--cream);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.bet-info-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--fairway-dark);
+}
+
+.bet-info-body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* ---------- Lobby code card ---------- */
+.code-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--fairway);
+  color: var(--cream);
+  border-radius: var(--radius-md);
+  padding: 0.7rem 1rem;
+  text-align: left;
+}
+
+.code-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.code-label {
+  margin: 0;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--sand-light);
+}
+
+.code-display {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  line-height: 1;
+  color: var(--white);
+}
+
+.code-hint {
+  margin: 0.2rem 0 0;
+  font-size: 12px;
+  color: var(--sand-light);
+  line-height: 1.3;
+}
+
+.code-card .btn-secondary {
+  flex: none;
+  background: var(--cream);
+  border-color: var(--cream);
+  padding: 0.5rem 0.85rem;
+  font-size: 13px;
+}
+
+.pill {
+  background: var(--sand-light);
+  color: var(--fairway-dark);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  background: var(--sand-light);
+  color: var(--fairway-dark);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+}
+
+.chip-host {
+  background: var(--fairway);
+  color: var(--cream);
+  font-size: 11px;
+  padding: 0.2rem 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* ---------- Tab bar (round) ---------- */
+.tabbar {
+  display: flex;
+  background: var(--cream);
+  border-bottom: 1px solid var(--line);
+}
+
+.round-sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tab {
+  flex: 1;
+  border: none;
+  background: none;
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 0.7rem 0;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+}
+
+.tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--flag);
+}
+
+.tabpanel {
+  display: none;
+  padding: 1.25rem 1.25rem 3rem;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tabpanel.active {
+  display: flex;
+}
+
+/* ---------- Scorecard tab ---------- */
+.scorecard-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.hole-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: transparent;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding: 1.1rem 0.5rem;
+  margin: 0 1rem;
+}
+
+.hole-nav .icon-btn {
+  background: transparent;
+  color: var(--fairway);
+  font-size: 22px;
+  width: 40px;
+  height: 40px;
+  flex: none;
+}
+
+.hole-nav .icon-btn:active {
+  background: var(--sand-light);
+}
+
+.hole-nav-center {
+  text-align: center;
+  flex: 1;
+}
+
+.hole-nav-label {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.hole-nav-number {
+  margin: 0.1rem 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: 46px;
+  font-weight: 600;
+  color: var(--fairway);
+  line-height: 1;
+}
+
+.hole-nav-meta {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;
+}
+
+.hole-nav-stat {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: var(--ink-soft);
+}
+
+#hole-score {
+  color: var(--fairway);
+}
+
+.par-editor {
+  background: var(--sand-light);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+}
+
+.stroke-entry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+}
+
+.stroke-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  background: var(--white);
+  font-size: 34px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--fairway);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.stroke-btn:active {
+  transform: scale(0.94);
+  background: var(--sand-light);
+}
+
+.stroke-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.stroke-display {
+  text-align: center;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stroke-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stroke-number {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--fairway);
+  line-height: 1;
+}
+
+.stroke-caption {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ---------- Round footer (Back / Share / Cancel) ---------- */
+/* Sits at the bottom of the round screen, after both tab panels, so the
+   controls are reachable from the Scorecard and Leaderboard tabs alike. */
+.round-footer {
+  padding: 1rem 1.25rem 2rem;
+  border-top: 1.5px solid var(--line);
+}
+
+/* Four borderless labels divided by a short, inset "+" — a vertical and a
+   horizontal line that float in the middle without reaching the edges. */
+.round-footer-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.round-footer-grid::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  bottom: 12%;
+  width: 1px;
+  background: var(--line);
+  transform: translateX(-50%);
+}
+
+/* Horizontal arm only when all four buttons are present (host, live round). */
+.round-footer-grid.is-quad::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: var(--line);
+  transform: translateY(-50%);
+}
+
+.round-footer-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 1rem 0.5rem;
+  border: none;
+  background: none;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.round-footer-btn:active {
+  opacity: 0.6;
+}
+
+.round-footer-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.round-footer-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.round-footer-btn-danger {
+  color: var(--flag);
+  border-color: var(--flag);
+}
+
+/* ---------- Putts stepper ---------- */
+.putts-row {
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0 1.25rem;
+}
+
+.putts-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.putts-entry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.putts-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  font-size: 30px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.putts-minus,
+.putts-plus {
+  background: var(--ink-faint);
+}
+
+.putts-btn:active {
+  transform: scale(0.94);
+}
+
+.putts-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.putts-number {
+  font-family: var(--font-mono);
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  min-width: 56px;
+  text-align: center;
+}
+
+/* ---------- Team-count stepper ---------- */
+.team-count-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0 1rem;
+}
+
+.team-count-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.team-count-entry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.team-count-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  font-size: 30px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink-faint);
+}
+
+.team-count-btn:active {
+  transform: scale(0.94);
+}
+
+.team-count-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.team-count-number {
+  font-family: var(--font-mono);
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  min-width: 56px;
+  text-align: center;
+}
+
+.end-round-wrap {
+  padding: 0.25rem 0 0.5rem;
+}
+
+.my-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* Scorecard-style card: front nine on one row, back nine on the next, each
+   nine ending in its total (OUT/IN) plus a round TOTAL column. */
+.sc-strip {
+  display: grid;
+  /* minmax(0, …) lets every column shrink below its content so all 11 columns
+     (9 holes + two totals) fit the phone width instead of overflowing. */
+  grid-template-columns: repeat(var(--sc-cols, 9), minmax(0, 1fr)) minmax(0, 1.2fr) minmax(0, 1.2fr);
+  gap: 3px;
+}
+
+.sc-strip-single {
+  grid-template-columns: repeat(var(--sc-cols, 9), minmax(0, 1fr)) minmax(0, 1.2fr);
+}
+
+.sc-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1px;
+  padding: 4px 1px;
+  min-height: 58px;
+  border-radius: 5px;
+  background: var(--sand-light);
+  color: var(--ink-faint);
+  border: 1.5px solid transparent;
+  font: inherit;
+}
+
+button.sc-cell {
+  cursor: pointer;
+}
+
+.sc-cell-num {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  opacity: 0.85;
+}
+
+/* The score box: a fixed-height slot that stays blank until a score exists,
+   so an unplayed hole reads like an empty scorecard box. */
+.sc-cell-score {
+  font-family: var(--font-mono);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.05;
+  min-height: 20px;
+}
+
+.sc-cell-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: 0.1px;
+  opacity: 0.8;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.sc-cell.played {
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.sc-cell.under {
+  background: var(--fairway-light);
+  color: var(--white);
+  border-color: var(--fairway-light);
+}
+
+.sc-cell.over {
+  background: var(--flag);
+  color: var(--white);
+  border-color: var(--flag);
+}
+
+.sc-cell.even {
+  background: var(--sand);
+  color: var(--ink);
+  border-color: var(--sand);
+}
+
+.sc-cell.current {
+  border-color: var(--fairway);
+  border-width: 2px;
+}
+
+/* Nine / round totals — a distinct cream tint so they read as summary columns. */
+.sc-total {
+  background: var(--cream);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.sc-total .sc-cell-num {
+  color: var(--fairway);
+  opacity: 1;
+}
+
+.sc-grand {
+  background: var(--white);
+}
+
+/* ---------- Skins hole-by-hole strip ---------- */
+.skins-strip-wrap {
+  margin-top: 0.9rem;
+}
+
+.skins-strip-label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 0.4rem;
+}
+
+.skins-strip {
+  display: grid;
+  /* minmax(0, 1fr) lets each column shrink below its content's intrinsic
+     width so a cell can never force the strip wider than the viewport;
+     the winner label (.skins-cell-sub) ellipsizes instead. */
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.skins-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 4px 1px;
+  min-height: 48px;
+  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--ink-faint);
+}
+
+.skins-cell-num {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+.skins-cell-main {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.skins-cell-sub {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.skins-cell.won {
+  background: var(--fairway-light);
+  border-color: var(--fairway-light);
+  color: var(--white);
+}
+
+.skins-cell.carry {
+  background: var(--sand);
+  border-color: var(--sand);
+  color: var(--ink);
+}
+
+.skins-cell.pending {
+  border-style: dashed;
+}
+
+/* Match-play hole-by-hole strip — reuses the skins-cell layout with a
+   colour per side: Team A (green), Team B (red), all-square (neutral). */
+.match-cell.team-a {
+  background: var(--fairway-light);
+  border-color: var(--fairway-light);
+  color: var(--white);
+}
+
+.match-cell.team-b {
+  background: var(--flag);
+  border-color: var(--flag);
+  color: var(--white);
+}
+
+.match-cell.square {
+  background: var(--sand);
+  border-color: var(--sand);
+  color: var(--ink);
+}
+
+.match-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0 0 0.5rem;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.match-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.match-swatch {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  flex: none;
+}
+
+.match-swatch.team-a {
+  background: var(--fairway-light);
+}
+
+.match-swatch.team-b {
+  background: var(--flag);
+}
+
+/* ---------- Leaderboard tab ---------- */
+.modetab-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.modetab {
+  border: 1.5px solid var(--line);
+  background: var(--white);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.modetab.active {
+  background: var(--fairway);
+  border-color: var(--fairway);
+  color: var(--white);
+}
+
+.board-meta {
+  font-size: 13px;
+  color: var(--ink-faint);
+  line-height: 1.5;
+}
+
+.leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lb-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-left: 4px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 0.7rem 0.9rem;
+}
+
+.lb-row.leader {
+  border-left-color: var(--flag);
+  background: var(--sand-light);
+}
+
+.lb-rank {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+.lb-row.leader .lb-rank {
+  color: var(--flag-dark);
+}
+
+.lb-name-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lb-name {
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lb-thru {
+  font-size: 11.5px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+}
+
+.lb-score {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  text-align: right;
+  min-width: 48px;
+}
+
+.lb-score.neg {
+  color: var(--fairway);
+}
+
+.lb-score.pos {
+  color: var(--flag);
+}
+
+.lb-detail {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+  text-align: right;
+  min-width: 56px;
+}
+
+.lb-empty {
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 14px;
+  padding: 2rem 1rem;
+}
+
+/* Section label between the team standings and the individual leaderboard on a
+   tournament board. */
+.board-subhead {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 1.1rem 0 0.5rem;
+}
+.board-subhead:first-child {
+  margin-top: 0;
+}
+
+.match-card {
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.match-vs {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--fairway);
+  margin: 0 0 0.5rem;
+}
+
+.match-status {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.match-thru {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  margin: 0.4rem 0 0;
+}
+
+/* ---------- Nassau board (front / back / total) ---------- */
+.nassau-rows {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nassau-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.55rem 0.25rem;
+  border-top: 1px solid var(--line);
+  text-align: left;
+}
+
+.nassau-row:first-child {
+  border-top: none;
+}
+
+.nassau-seg {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ink-faint);
+}
+
+.nassau-result {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+}
+
+.nassau-sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+/* Sixes board — one block per rotating 6-hole segment. */
+.sixes-card {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.sixes-seg {
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--line);
+}
+
+.sixes-seg:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.sixes-seg-label {
+  margin: 0 0 0.2rem;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ink-faint);
+}
+
+.sixes-pairing {
+  margin: 0 0 0.2rem;
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--fairway);
+}
+
+.sixes-vs {
+  color: var(--ink-faint);
+  font-size: 13px;
+  margin: 0 0.15rem;
+}
+
+.sixes-result {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* Segmented radio control (e.g. Nassau match/stroke). */
+.segmented {
+  display: flex;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-top: 0.4rem;
+}
+
+.segmented-option {
+  flex: 1;
+  position: relative;
+  text-align: center;
+  cursor: pointer;
+}
+
+.segmented-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.segmented-option span {
+  display: block;
+  padding: 0.6rem 0.5rem;
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.segmented-option + .segmented-option span {
+  border-left: 1.5px solid var(--line);
+}
+
+.segmented-option input:checked + span {
+  background: var(--fairway);
+  color: var(--white);
+}
+
+/* ---------- History ---------- */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.history-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.8rem 0.95rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.history-row:active {
+  background: var(--sand-light);
+}
+
+.history-row-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.history-course {
+  font-weight: 600;
+  font-size: 15.5px;
+}
+
+.history-date {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.history-winner {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.history-winner strong {
+  color: var(--fairway);
+  font-weight: 600;
+}
+
+.history-empty {
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 14px;
+  padding: 2rem 1rem;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--cream);
+  padding: 0.7rem 1.1rem;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 100;
+  max-width: 85%;
+  text-align: center;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ---------- Friends ---------- */
+.friends-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.friend-search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.friend-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.75rem;
+}
+
+.friend-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+  flex: 1;
+}
+
+/* Tappable friend row — opens that friend's rounds. */
+.friend-info-tappable {
+  cursor: pointer;
+}
+
+.friend-info-tappable:focus-visible {
+  outline: 2px solid var(--fairway);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.friend-name {
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.friend-handle {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.friend-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: none;
+}
+
+.friend-btn {
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 0.4rem 0.7rem;
+  font-family: var(--font-body);
+}
+
+.friend-btn-primary {
+  background: var(--fairway);
+  color: var(--cream);
+}
+
+.friend-btn-secondary {
+  background: var(--sand-light);
+  color: var(--ink);
+}
+
+.friend-btn-muted {
+  background: none;
+  color: var(--ink-faint);
+}
+
+.friend-remove {
+  background: none;
+  border: none;
+  color: var(--flag);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 0.3rem;
+}
+
+.friends-empty {
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 14px;
+  padding: 1.25rem 1rem;
+}
+
+/* ---------- Friend picker modal ---------- */
+.friend-picker-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 1rem;
+}
+
+/* Explicit [hidden] rule so the attribute wins over display:flex above. */
+.friend-picker-modal[hidden] {
+  display: none;
+}
+
+.friend-picker-card {
+  background: var(--cream);
+  border-radius: var(--radius-md);
+  width: 100%;
+  max-width: 360px;
+  max-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.friend-picker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.friend-picker-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0;
+}
+
+.friend-picker-list {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+}
+
+/* ---------- Drawer username nudge ---------- */
+.drawer-nudge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0.75rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--sand-light);
+  border-radius: var(--radius-sm);
+}
+
+.drawer-nudge[hidden] {
+  display: none;
+}
+
+.drawer-nudge-text {
+  flex: 1;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--fairway);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.drawer-nudge-dismiss {
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.2rem;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+
+  .btn,
+  .toast {
+    transition: none;
+  }
+}
+
+/* ---------- Focus visibility ---------- */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--fairway-light);
+  outline-offset: 2px;
+}
+
+/* ---------- Hidden utility override ---------- */
+/* Some elements (e.g. .btn-lg, .field) set their own `display`
+   value, which otherwise out-ranks the browser's default [hidden]
+   behavior. This makes `el.hidden = true` always win, no matter
+   what other classes are on the element. */
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- Feedback modal ---------- */
+.feedback-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 20, 16, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1100;
+}
+
+.feedback-modal[hidden] {
+  display: none;
+}
+
+.feedback-card {
+  width: min(100%, 360px);
+  background: var(--cream);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.feedback-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.feedback-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--fairway-dark);
+  margin: 0;
+}
+
+.feedback-textarea {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 0.85rem;
+  font-size: 15px;
+  font-family: var(--font-body);
+  color: var(--ink);
+  resize: vertical;
+  min-height: 120px;
+}
+
+.feedback-textarea:focus {
+  outline: 2px solid var(--fairway-light);
+  outline-offset: 1px;
+}
